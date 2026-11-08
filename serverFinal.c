@@ -199,7 +199,7 @@ void* tcp(void* arg){
 }
 
 void process_client(int new_client,Shared_mem *shared_mem){
-    write(new_client, "Welcome to the server\n", 23);
+    write(new_client, "Welcome to the server, now you can Login!\n", 50);
     int bytes_received = 0;
     char buffer[BUF_SIZE];
     char msg_received[BUF_SIZE];
@@ -232,6 +232,7 @@ void process_client(int new_client,Shared_mem *shared_mem){
 
 
 void receive_client_command(char* command, int new_client, Shared_mem *shared_mem){
+    void show_menu( int fd, struct sockaddr_in client_address, socklen_t client_address_len);
     char* space = strtok(command, " ");
     if(space == NULL){
         write(new_client, "<Invalid command>\n", 18);
@@ -255,11 +256,11 @@ void receive_client_command(char* command, int new_client, Shared_mem *shared_me
         if (check_user(username, password,shared_mem) && (check_type(username, "aluno",shared_mem) || check_type(username, "professor",shared_mem)) && !check_type(username, "admistrador",shared_mem)){
             if(check_type(username, "aluno",shared_mem)){client_logged_in=1;}
             if(check_type(username, "professor",shared_mem)){client_logged_in=2;}
-            write(new_client,"OK\n",3);
+            write(new_client,"Login Successfull!\n Here you have commands Menu:\n Professor: LIST_CLASSES, CREATE_CLASS, SEND\n Aluno: LIST_CLASSES, LIST_SUBSCRIBED,SUBSCRIBE_CLASS\n",500);
             strcpy(logged_username, username);
             return;
         }else {
-            error_message = "REJECTED\n";
+            error_message = "REJECTED, please repeat with this format <LOGIN> <nome> <password>\n";
             write(new_client, error_message, strlen(error_message));
             return;
         }

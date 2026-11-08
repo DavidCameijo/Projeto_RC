@@ -20,7 +20,7 @@ void list_classes(int client_socket, Shared_mem *shared_mem) {
     }
 
     // Construct the class list message
-    char class_list[BUFLEN] = "<Class List>\n";
+    char class_list[BUFLEN] = "<That's the class list>\n";
     for (int i = 0; i < shared_mem->n_turmas; i++) {
         char class_info[100]; // Buffer size for each class
         snprintf(class_info, sizeof(class_info), "CLASS %s\n", shared_mem->turmas[i].name);
@@ -46,9 +46,8 @@ void list_classes(int client_socket, Shared_mem *shared_mem) {
 
 // LIST_SUBSCRIBED
 void list_subscribed(char *username, int client_socket, Shared_mem *shared_mem) {
-    char message_sent[BUFLEN];
-    sprintf(message_sent, "Received request to list subscribed classes for user %s\n", username);
-    write(client_socket,message_sent,strlen(message_sent)+1);
+  
+    
 
     // Semaphore wait
     //sem_wait(semShm);
@@ -79,7 +78,7 @@ void list_subscribed(char *username, int client_socket, Shared_mem *shared_mem) 
     }
 
     // Construct the subscribed class list message
-    char subscribed_list[BUFLEN] = "<Classes>\n";
+    char subscribed_list[BUFLEN] = "<Your suscribed Classes>\n";
     for (int i = 0; i < user->n_subscribed_classes; i++) {
         char class_info[100]; // Buffer size for each class
         const char *ip_address = get_class_ip(shared_mem, user->subscribed_classes[i]);
@@ -160,7 +159,7 @@ void subscribe_user_to_class(char *username, char *class_name, int client_socket
     //sem_post(semShm);
 
     char accepted_message[BUFLEN];
-    sprintf(accepted_message, "ACCEPTED %s\n", turma->multicast_address);
+    sprintf(accepted_message, "You have successfuly subscribed! %s\n", turma->multicast_address);
     write(client_socket,accepted_message,strlen(accepted_message)+1);
 }
 
@@ -242,7 +241,7 @@ void create_class(char *class_name, int size, int client_socket, Shared_mem *sha
     
 
     char confirmation_message[BUF_SIZE];
-    sprintf(confirmation_message, "OK %s \n", new_class->multicast_address);
+    sprintf(confirmation_message, "Class Created! %s\n", new_class->multicast_address);
     write(client_socket,confirmation_message,strlen(confirmation_message)+1);
 
     shared_mem->n_turmas++;

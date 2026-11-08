@@ -56,12 +56,34 @@ void add_user(char *username, char *password, char *role, int fd, struct sockadd
     sendto(fd, confirmation_message, strlen(confirmation_message), 0, (struct sockaddr*) &client_address, client_address_len);
 }
 void add_user_to_config_file(char* username, char* password, char* role,char* config_file) {
-    FILE *config = fopen(config_file, "a");
+    FILE *config = fopen(config_file, "r+");
     if (config == NULL) {
         printf("Error opening config file for appending.\n");
         return;
     }
-    fprintf(config, "\n%s;%s;%s", username, password, role);
+    char line[BUFLEN];
+    long int insert_position = -1;
+    
+    // Procura por uma linha em branco ou pelo final do arquivo
+    while (fgets(line, sizeof(line), config) != NULL) {
+    	// Se encontrarmos uma linha em branco, marcamos a posição de inserção
+    	if (strcmp(line, "\n") == 0) {
+         	insert_position = ftell (config);
+         	break;
+        }
+    }
+    
+    
+    // Se não encontrarmos uma linha em branco, a posição de inserção será o final do arquivo 
+    if (insert_position == -1) {
+    	fseek(config, 0, SEEK_END);
+    	insert_position = ftell(config);
+    }
+    // Move o ponteiro de arquivo para a posição de inserção
+    fseek(config, insert_position, SEEK_SET);
+    
+    fprintf(config, "%s;%s;%s\n", username, password, role);
+    
     fclose(config);
 }
 
@@ -154,6 +176,6 @@ void shutdown_server(int fd, struct sockaddr_in client_address, socklen_t client
 // LOGIN <username> <password>
 void admin_login(char *username, char *password, int fd, struct sockaddr_in client_address, socklen_t client_address_len){
     char message_sent[BUFLEN];
-    sprintf(message_sent, "Received request to login as admin with username %s and password %s\n", username, password);
+    sprintf(message_sent, "Login as admin with username %s and password %s successful!\n", username, password);
     sendto(fd, message_sent, strlen(message_sent) + 1, 0, (struct sockaddr*) &client_address, client_address_len);
 }

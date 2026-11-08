@@ -92,7 +92,7 @@ char *get_class_ip(Shared_mem *shared_mem, const char *class_name);
 //        COMANDOS ADMIN 
 
 //show menu
-void show_menu(int fd, struct sockaddr_in client_address, socklen_t client_address_len);
+void show_menu( int fd, struct sockaddr_in client_address, socklen_t client_address_len);
 
 // ADD_USER <username> <password> <role>
 void add_user(char *username, char *password, char *role, int fd, struct sockaddr_in client_address, socklen_t client_address_len, Shared_mem *shared_mem,char* config_file);
